@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SpendScout</title>
+<style>
+:root{--bg:#f4f3ee;--sf:#fff;--ink:#101311;--mu:#6b706c;--ln:#e2e1da;--ac:#0b6b47;--acb:#dcf2e6;--aci:#fff;--wn:#b4531a;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0e0c;--sf:#131714;--ink:#eef2ee;--mu:#8a928b;--ln:#232924;--ac:#5fe0a1;--acb:#143324;--aci:#06130c;--wn:#f0a066;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b0e0c;--sf:#131714;--ink:#eef2ee;--mu:#8a928b;--ln:#232924;--ac:#5fe0a1;--acb:#143324;--aci:#06130c;--wn:#f0a066;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--ln) 1px,transparent 1px),linear-gradient(90deg,var(--ln) 1px,transparent 1px);background-size:48px 48px;opacity:.35;mask-image:radial-gradient(ellipse at 50% 0,#000,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 50% 0,#000,transparent 70%);pointer-events:none}
+.w{max-width:960px;margin:0 auto;padding:0 18px 56px;position:relative}
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:-.3px}
+.logo svg{width:26px;height:26px;color:var(--ac)}
+.tabs{position:relative;display:flex;background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:3px;overflow-x:auto;max-width:100%}
+.tabs button{position:relative;z-index:1;border:0;background:none;color:var(--mu);font:inherit;font-size:13.5px;font-weight:500;padding:7px 13px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:color .25s}
+.tabs button.on{color:var(--aci)}
+.ind{position:absolute;top:3px;bottom:3px;left:0;background:var(--ac);border-radius:9px;transition:transform .4s cubic-bezier(.3,1.3,.5,1),width .4s cubic-bezier(.3,1.3,.5,1)}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center;padding:30px 0 34px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}}
+.eyebrow{font:600 12px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+h1{font-size:clamp(30px,5.4vw,48px);line-height:1.04;letter-spacing:-.04em;margin:12px 0;font-weight:750}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--ac),var(--ac)) 0 100%/0 .12em no-repeat;animation:ul 1s .5s forwards}
+@keyframes ul{to{background-size:100% .12em}}
+.lede{color:var(--mu);max-width:470px;margin:0 0 18px}
+.phone{background:var(--sf);border:1px solid var(--ln);border-radius:26px;padding:14px;box-shadow:0 30px 60px -30px rgba(0,0,0,.35);animation:bob 6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.phone .hd{display:flex;justify-content:space-between;color:var(--mu);font-size:11px;margin-bottom:10px}
+.notif{background:var(--bg);border:1px solid var(--ln);border-radius:14px;padding:11px 12px;display:flex;gap:10px;align-items:center;min-height:62px}
+.notif.sw{animation:sw .5s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes sw{from{opacity:0;transform:translateY(-14px) scale(.96)}}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--ac)}
+.pm{margin-top:10px;font-size:12px;color:var(--mu)}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:20px;margin-bottom:14px;transition:border-color .25s,transform .25s}
+.card:hover{border-color:var(--ac);transform:translateY(-2px)}
+h2{margin:0 0 4px;font-size:19px;letter-spacing:-.02em}h3{margin:18px 0 8px;font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mu)}
+.mu{color:var(--mu);font-size:13.5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--ln);border-radius:10px;padding:9px 11px;min-width:0;transition:border-color .2s,box-shadow .2s;outline:0}
+input:focus,select:focus,textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acb)}
+input[type=range]{--p:50%;-webkit-appearance:none;appearance:none;height:6px;padding:0;width:100%;border:0;border-radius:6px;background:linear-gradient(90deg,var(--ac) var(--p),var(--ln) var(--p));box-shadow:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--sf);border:2px solid var(--ac);cursor:grab;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.25)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--sf);border:2px solid var(--ac)}
+.btn{position:relative;overflow:hidden;background:var(--ac);color:var(--aci);border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;transition:transform .15s,filter .2s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.96)}
+.btn.g{background:var(--acb);color:var(--ac)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.rip{position:absolute;border-radius:50%;background:currentColor;opacity:.25;transform:scale(0);animation:rip .6s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+.num{font-size:34px;font-weight:750;letter-spacing:-.04em;line-height:1.1}
+.li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--ln);animation:in .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*45ms)}
+.li:last-child{border:0}
+@keyframes in{from{opacity:0;transform:translateX(-12px)}}
+.li.fl{animation:in .45s both,flash 1.2s}
+@keyframes flash{from{background:var(--acb)}}
+.tag{font:600 11px/1 ui-monospace,Menlo,Consolas,monospace;padding:4px 7px;border-radius:6px;background:var(--acb);color:var(--ac)}
+.ok{color:var(--ac)}
+.pool{display:flex;gap:18px;align-items:center}
+.tank{position:relative;width:76px;height:110px;border:2px solid var(--ac);border-radius:14px 14px 22px 22px;overflow:hidden;flex:none;background:var(--bg)}
+.fill{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--ac);transition:height .9s cubic-bezier(.3,1.1,.4,1)}
+.fill::before,.fill::after{content:"";position:absolute;left:-50%;width:200%;height:16px;top:-9px;background:var(--ac);border-radius:42%;animation:wv 4s linear infinite}
+.fill::after{opacity:.4;top:-12px;animation-duration:6s;animation-direction:reverse}
+@keyframes wv{to{transform:translateX(25%)}}
+.bar{height:8px;background:var(--ln);border-radius:8px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;width:0;background:var(--ac);border-radius:8px;transition:width .8s cubic-bezier(.3,1,.4,1)}
+.bar i.wn{background:var(--wn)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.g2{grid-template-columns:1fr}}
+.sec{display:none}.sec.on{display:block;animation:in .5s cubic-bezier(.2,.8,.2,1)}
+.rv{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s cubic-bezier(.2,.8,.2,1)}.rv.in{opacity:1;transform:none}
+.note{border-left:3px solid var(--ac);background:var(--acb);padding:10px 12px;border-radius:0 10px 10px 0;font-size:13.5px;margin-top:12px}
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translate(-50%,-90px);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:14px;font-weight:600;font-size:14px;z-index:20;transition:transform .5s cubic-bezier(.3,1.4,.5,1);max-width:92vw;pointer-events:none}
+.toast.on{transform:translate(-50%,0)}
+.cf{position:fixed;top:-14px;width:8px;height:12px;z-index:30;pointer-events:none;animation:fall 1.8s cubic-bezier(.3,.6,.5,1) forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg)}}
+footer{color:var(--mu);font-size:12px;text-align:center;padding-top:22px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.chip{padding:7px 13px;border:1px solid var(--ln);border-radius:999px;font-size:13.5px;cursor:pointer;user-select:none;transition:all .25s cubic-bezier(.3,1.4,.5,1)}.chip:hover{border-color:var(--ac)}.chip:active{transform:scale(.93)}.chip.on{background:var(--ac);color:var(--aci);border-color:var(--ac)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}@media(max-width:560px){.steps{grid-template-columns:1fr}}
+.steps b{font:600 12px ui-monospace,Menlo,Consolas,monospace;color:var(--ac)}.steps h4{margin:6px 0 4px;font-size:16px}.steps p{margin:0;color:var(--mu);font-size:13.5px}
+.steps>div{border-top:2px solid var(--ln);padding-top:12px;transition:border-color .3s}.steps>div:hover{border-color:var(--ac)}
+.ck circle{stroke-dasharray:151;stroke-dashoffset:151;animation:dr .7s forwards}.ck path{stroke-dasharray:40;stroke-dashoffset:40;animation:dr .5s .5s forwards}@keyframes dr{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="w">
+<div class="top">
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>SpendScout</div>
+  <div class="tabs" id="tabs"><span class="ind" id="ind"></span>
+    <button data-t="split" class="on">Split</button><button data-t="disc">Discover</button><button data-t="track">Tracker</button><button data-t="biz">Merchants</button><button data-t="join">Join</button></div>
+</div>
+
+<div class="hero">
+  <div>
+    <div class="eyebrow">Money for student groups</div>
+    <h1>Settle the bill <em>before</em> it arrives.</h1>
+    <p class="lede">Pre-fund a group pool, pay from it, and get every unused rupee back instantly. No chasing friends. Free for students.</p>
+    <div class="row"><button class="btn" onclick="go('split');demo()">Run the demo</button><button class="btn g" onclick="go('disc')">Find a spot</button><button class="btn g" onclick="go('join')">Join waitlist</button></div>
+  </div>
+  <div class="phone"><div class="hd"><span>Notifications</span><span>UPI</span></div>
+    <div class="notif" id="hn"><span class="dot"></span><div><b id="hw">Zomato</b><div class="mu" id="hd2">Debited ₹240 · Food</div></div></div>
+    <div class="pm">Auto-logged · <b id="hm" class="ok">₹240</b> this session</div></div>
+</div>
+
+<section class="sec on" id="split">
+  <div class="card rv">
+    <h2>Group pool</h2><div class="mu">Everyone adds money upfront. Bills are paid from the pool; the rest is refunded on close.</div>
+    <div class="row" style="margin-top:14px"><input id="pn" placeholder="Name" style="width:120px"><input id="pa" type="number" min="1" placeholder="₹ amount" style="width:110px"><button class="btn" onclick="addMember()">Add</button><button class="btn g" onclick="demo()">Load demo</button></div>
+    <div id="mem" style="margin-top:8px"></div>
+    <div class="pool" style="margin-top:14px"><div class="tank"><div class="fill" id="fill"></div></div><div><div class="num" id="pool">₹0</div><div class="mu">available · <span id="cnt">0</span> members</div></div></div>
+  </div>
+  <div class="card rv">
+    <h3 style="margin-top:0">Pay from pool</h3>
+    <div class="row"><input id="bn" placeholder="Where?" style="flex:1;min-width:130px"><input id="ba" type="number" min="1" placeholder="₹ bill" style="width:100px"><button class="btn" onclick="payBill()">Pay</button></div>
+    <div id="bills"></div>
+    <div class="note" id="refInfo">Add members and pay a bill to see refunds.</div>
+    <div id="refund"></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="refBtn" onclick="settle()" disabled>Close pool &amp; refund</button><button class="btn g" onclick="resetPool()">Reset</button></div>
+  </div>
+</section>
+
+<section class="sec" id="disc">
+  <div class="card rv"><h2>Budget-aware discovery</h2><div class="mu">Only places your group can afford this month.</div>
+    <div class="g2" style="margin-top:16px"><div><label class="mu">Budget left <b id="bv"></b></label><input type="range" id="bud" min="100" max="3000" step="50" value="800"></div>
+    <div><label class="mu">Group size <b id="gv"></b></label><input type="range" id="grp" min="1" max="10" value="4"></div></div>
+    <div class="row" style="margin-top:14px"><select id="cat"><option value="">All types</option><option>Cafe</option><option>Food</option><option>Gaming</option><option>Events</option></select><span class="mu" id="rc"></span></div></div>
+  <div class="card rv" id="places"></div>
+</section>
+
+<section class="sec" id="track">
+  <div class="card rv"><h2>UPI auto-tracking</h2><div class="mu">Paste a payment SMS or pick a sample. It is parsed and categorised on the spot.</div>
+    <div class="row" style="margin:14px 0"><button class="btn g" onclick="sample(0)">Sample 1</button><button class="btn g" onclick="sample(1)">Sample 2</button><button class="btn g" onclick="sample(2)">Sample 3</button></div>
+    <textarea id="sms" rows="3" style="width:100%" placeholder="Rs 240.00 debited from A/c via UPI to ZOMATO on 07-11-26"></textarea>
+    <div class="row" style="margin-top:10px"><button class="btn" onclick="parseSms()">Parse &amp; log</button><span class="mu" id="perr"></span></div></div>
+  <div class="card rv"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Monthly budget</h3><input id="mb" type="number" value="5000" style="width:100px"></div>
+    <div class="bar"><i id="mbar"></i></div><div class="mu"><b id="spent">₹0</b> spent · <b id="left">₹5,000</b> left</div>
+    <div class="row" id="cats" style="margin-top:8px"></div><h3>Auto-logged</h3><div id="log"><div class="mu">Nothing yet.</div></div></div>
+</section>
+
+<section class="sec" id="biz">
+  <div class="card rv"><h2>How SpendScout earns</h2><div class="mu">Students never pay. Local businesses pay for student footfall.</div>
+    <div class="g2" style="margin-top:14px"><div><span class="tag">LEAD-GEN</span><h3 style="margin-top:8px">Merchant fee</h3><div class="mu">Cafes, gaming centres and shops pay per group visit sent.</div></div>
+    <div><span class="tag">PROMOTION</span><h3 style="margin-top:8px">Event fee</h3><div class="mu">Organisers pay to feature campus gigs in Discovery.</div></div></div></div>
+  <div class="card rv"><h3 style="margin-top:0">Revenue estimator</h3>
+    <div class="g2"><div><label class="mu">Visits / month <b id="v1"></b></label><input type="range" id="vis" min="50" max="5000" step="50" value="500"></div>
+    <div><label class="mu">Fee per visit <b id="v2"></b></label><input type="range" id="fee" min="5" max="50" value="15"></div>
+    <div><label class="mu">Promoted events <b id="v3"></b></label><input type="range" id="ev" min="0" max="20" value="4"></div>
+    <div><label class="mu">Fee per event <b id="v4"></b></label><input type="range" id="evf" min="500" max="5000" step="100" value="1500"></div></div>
+    <div class="num" id="rev" style="margin-top:16px">₹0</div><div class="mu">estimated monthly revenue (illustrative)</div>
+    <div class="bar" style="height:10px"><i id="rb1"></i></div><div class="mu"><span class="ok">■</span> lead-gen share of revenue: <b id="rp">0%</b></div></div>
+</section>
+<section class="sec" id="join">
+  <div class="card rv"><div class="eyebrow">Early access</div><h2 style="font-size:28px;margin-top:8px;letter-spacing:-.03em">Be first on campus.</h2>
+    <div class="mu"><b class="num" style="font-size:22px" id="wc">0</b> on the waitlist (demo counter)</div>
+    <div id="jform" style="margin-top:16px">
+      <div class="g2"><input id="jn" placeholder="Full name"><input id="je" type="email" placeholder="Email"></div>
+      <div class="g2" style="margin-top:10px"><input id="jc" placeholder="College"><select id="jr"><option>I'm a student</option><option>I run a cafe or shop</option><option>I organise events</option></select></div>
+      <h3>What are you most excited about?</h3>
+      <div class="row"><span class="chip on">Group pool</span><span class="chip">Discovery</span><span class="chip">UPI tracking</span><span class="chip">Event deals</span></div>
+      <div class="row" style="margin-top:16px"><button class="btn" onclick="joinNow()">Join the waitlist</button><span class="mu" id="jerr" style="color:var(--wn)"></span></div>
+    </div>
+    <div id="jok" style="display:none;text-align:center;padding:24px 0"><svg class="ck" viewBox="0 0 52 52" width="72" height="72"><circle cx="26" cy="26" r="24" fill="none" stroke="var(--ac)" stroke-width="3"/><path d="M15 27l8 8 14-16" fill="none" stroke="var(--ac)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg><h2 id="jhi" style="margin-top:12px"></h2><div class="mu">Your spot on the list: <b class="ok" id="jpos"></b></div></div>
+  </div>
+  <div class="card rv"><h3 style="margin-top:0">How it works</h3><div class="steps">
+    <div><b>01</b><h4>Pool</h4><p>Friends add money upfront into a temporary group wallet.</p></div>
+    <div><b>02</b><h4>Pay</h4><p>The bill is paid from the pool. Nobody fronts the cash.</p></div>
+    <div><b>03</b><h4>Refund</h4><p>Unused money goes back to everyone instantly.</p></div></div></div>
+</section>
+<footer>spendscout · prototype · demo data, no real payments</footer>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id),R=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function tween(el,to,f=R,d=700){const a=el._v||0,t0=performance.now();el._v=to;(function s(t){const k=Math.min(1,(t-t0)/d),e=1-Math.pow(1-k,3);el.textContent=f(a+(to-a)*e);if(k<1)requestAnimationFrame(s)})(t0)}
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2400)}
+function confetti(){const c=['#0b6b47','#5fe0a1','#f0a066','#9aa1c7','#eef2ee'];for(let i=0;i<54;i++){const e=document.createElement('i');e.className='cf';e.style.left=Math.random()*100+'vw';e.style.background=c[i%5];e.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),2400)}}
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.btn');if(!b)return;const r=b.getBoundingClientRect(),s=document.createElement('span'),z=Math.max(r.width,r.height)*2;s.className='rip';s.style.cssText=`width:${z}px;height:${z}px;left:${e.clientX-r.left-z/2}px;top:${e.clientY-r.top-z/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),600)});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
+function obs(){document.querySelectorAll('.rv:not(.in)').forEach(n=>io.observe(n))}obs();
+// tabs
+function go(t){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on',s.id===t));ind();obs();if(t==='disc')rDisc();if(t==='biz')rRev();if(t==='join')jn()}
+function ind(){const b=document.querySelector('#tabs button.on'),i=$('ind');i.style.width=b.offsetWidth+'px';i.style.transform=`translateX(${b.offsetLeft-3}px)`}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>go(b.dataset.t));addEventListener('resize',ind);addEventListener('load',ind);ind();
+// hero notifications
+const H=[['Zomato',240,'Food'],['Chai Point',60,'Cafe'],['Netflix',499,'Subscriptions'],['Rapido',85,'Transport']];let hi=0,ht=240;
+setInterval(()=>{hi=(hi+1)%H.length;const h=H[hi];ht=hi?ht+h[1]:h[1];$('hw').textContent=h[0];$('hd2').textContent=`Debited ${R(h[1])} · ${h[2]}`;tween($('hm'),ht);const n=$('hn');n.classList.remove('sw');void n.offsetWidth;n.classList.add('sw')},2600);
+// split
+let mem=[],bills=[],closed=false;
+const tot=()=>mem.reduce((a,m)=>a+m.amt,0),sb=()=>bills.reduce((a,b)=>a+b.amt,0);
+function addMember(){const n=$('pn').value.trim(),a=+$('pa').value;if(!n||a<=0)return;mem.push({n,amt:a});$('pn').value='';$('pa').value='';rSplit(1)}
+function payBill(){const n=$('bn').value.trim()||'Bill',a=+$('ba').value;if(a<=0)return;
+  if(a>tot()-sb()){toast('Not enough in the pool. Top up first.');return}
+  bills.push({n,amt:a});$('bn').value='';$('ba').value='';rSplit(2)}
+function settle(){const left=tot()-sb(),t=tot();if(!t)return;closed=true;
+  $('refund').innerHTML=mem.map((m,i)=>`<div class="li" style="--i:${i}"><span>${esc(m.n)}</span><b class="ok" data-v="${left*m.amt/t}">₹0</b></div>`).join('');
+  $('refund').querySelectorAll('[data-v]').forEach((e,i)=>setTimeout(()=>tween(e,+e.dataset.v),i*180));
+  $('refInfo').textContent='Refunded instantly to each member\'s UPI.';$('refBtn').disabled=true;confetti();toast('Refunds sent');
+  $('fill').style.height='0%';tween($('pool'),0)}
+function resetPool(){mem=[];bills=[];closed=false;$('refund').innerHTML='';$('refInfo').textContent='Add members and pay a bill to see refunds.';rSplit()}
+function demo(){mem=[{n:'Aman',amt:300},{n:'Riya',amt:300},{n:'Kabir',amt:300},{n:'Sara',amt:300}];bills=[{n:'Pizza Hub',amt:870}];closed=false;$('refund').innerHTML='';rSplit(1);toast('Demo loaded. Close the pool to refund.')}
+function rSplit(f){const left=tot()-sb();
+  $('mem').innerHTML=mem.map((m,i)=>`<div class="li${f===1&&i===mem.length-1?' fl':''}" style="--i:${f===1&&mem.length>1&&i<mem.length-1?0:i}"><span>${esc(m.n)}</span><b>${R(m.amt)}</b></div>`).join('');
+  $('bills').innerHTML=bills.map((b,i)=>`<div class="li${f===2&&i===bills.length-1?' fl':''}"><span>${esc(b.n)}</span><b>− ${R(b.amt)}</b></div>`).join('');
+  tween($('pool'),left);$('cnt').textContent=mem.length;$('fill').style.height=(tot()?left/tot()*100:0)+'%';
+  $('refBtn').disabled=!mem.length||closed;if(mem.length&&bills.length&&!closed)$('refInfo').textContent='Leftover is split back in proportion to what each person put in.'}
+// discovery
+const P=[['Chai Point','Cafe',90,'0.4 km'],['Campus Canteen','Food',70,'0.2 km'],['Momo Junction','Food',110,'0.8 km'],['Brew & Books','Cafe',180,'1.1 km'],['Pixel Arena','Gaming',150,'1.5 km'],['Pizza Hub','Food',200,'1.2 km'],['Level Up Lounge','Gaming',250,'2.0 km'],['Open Mic Night','Events',100,'0.6 km'],['Rooftop Grill','Food',380,'2.4 km'],['Fest Entry: Rhythm','Events',300,'1.0 km']];
+const sl=el=>el.style.setProperty('--p',(el.value-el.min)/(el.max-el.min)*100+'%');
+function rDisc(){const b=+$('bud').value,g=+$('grp').value,c=$('cat').value;sl($('bud'));sl($('grp'));$('bv').textContent=R(b);$('gv').textContent=g;
+  const l=P.filter(p=>(!c||p[1]===c)&&p[2]*g<=b).sort((x,y)=>y[2]-x[2]);$('rc').textContent=l.length+' of '+P.length+' places fit';
+  $('places').innerHTML=l.length?l.map((p,i)=>`<div class="li" style="--i:${i}"><div><b>${p[0]}</b> <span class="tag">${p[1].toUpperCase()}</span><div class="mu">${p[3]} · ${R(p[2])} per person</div></div><div style="text-align:right"><b>${R(p[2]*g)}</b><div class="mu ok">${R(b-p[2]*g)} left</div></div></div>`).join(''):'<div class="mu">Nothing fits. Raise the budget or shrink the group.</div>'}
+['bud','grp','cat'].forEach(i=>$(i).oninput=rDisc);rDisc();
+// tracker
+const S=['Rs 240.00 debited from A/c XX1234 via UPI to ZOMATO on 07-11-26. UPI Ref 4455','INR 60 paid to CHAI POINT using UPI. Ref 7788','Rs. 499.00 sent to NETFLIX via UPI A/c XX1234'];
+const K={Food:/zomato|swiggy|momo|pizza|canteen|restaurant/i,Cafe:/chai|cafe|coffee|brew/i,Transport:/uber|ola|rapido|metro|irctc/i,Subscriptions:/netflix|spotify|prime|hotstar/i,Gaming:/arena|game|steam|pixel/i};
+let tx=[];function sample(i){$('sms').value=S[i]}
+function parseSms(){const t=$('sms').value,m=t.match(/(?:rs\.?|inr|₹)\s*([\d,]+(?:\.\d+)?)/i),d=t.match(/(?:to|at)\s+([A-Za-z][A-Za-z0-9 &.-]*?)(?:\s+(?:on|via|using|ref|upi|a\/c)\b|\.|$)/i);
+  if(!m||!/debited|paid|sent|spent/i.test(t)){$('perr').textContent='Could not read a UPI debit from that.';return}
+  $('perr').textContent='';const amt=parseFloat(m[1].replace(/,/g,'')),who=d?d[1].trim():'Unknown';let cat='Other';for(const k in K)if(K[k].test(who)){cat=k;break}
+  tx.unshift({amt,who,cat});$('sms').value='';rTrack(1);const T=tx.reduce((a,x)=>a+x.amt,0);toast(T>(+$('mb').value||1)*.8?'Over 80% of your budget used':'Logged '+R(amt)+' under '+cat)}
+function rTrack(f){const T=tx.reduce((a,t)=>a+t.amt,0),mb=+$('mb').value||1,p=Math.min(100,T/mb*100);
+  tween($('spent'),T);tween($('left'),mb-T);$('mbar').style.width=p+'%';$('mbar').classList.toggle('wn',p>80);
+  const by={};tx.forEach(t=>by[t.cat]=(by[t.cat]||0)+t.amt);$('cats').innerHTML=Object.entries(by).map(([k,v])=>`<span class="tag">${k.toUpperCase()} ${R(v)}</span>`).join('');
+  $('log').innerHTML=tx.length?tx.map((t,i)=>`<div class="li${f&&!i?' fl':''}" style="--i:${f?0:i}"><div><b>${esc(t.who)}</b> <span class="tag">${t.cat.toUpperCase()}</span></div><b>− ${R(t.amt)}</b></div>`).join(''):'<div class="mu">Nothing yet.</div>'}
+$('mb').oninput=()=>rTrack();
+// revenue
+function rRev(){const v=+$('vis').value,f=+$('fee').value,e=+$('ev').value,ef=+$('evf').value;['vis','fee','ev','evf'].forEach(i=>sl($(i)));
+  $('v1').textContent=v;$('v2').textContent=R(f);$('v3').textContent=e;$('v4').textContent=R(ef);const a=v*f,T=a+e*ef;tween($('rev'),T,R,400);
+  $('rb1').style.width=(T?a/T*100:0)+'%';$('rp').textContent=Math.round(T?a/T*100:0)+'%'}
+['vis','fee','ev','evf'].forEach(i=>$(i).oninput=rRev);rRev();
+// waitlist
+let wl=1248;
+function jn(){tween($('wc'),wl,v=>Math.round(v).toLocaleString('en-IN'),1200)}
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>c.classList.toggle('on'));
+function joinNow(){const n=$('jn').value.trim(),e=$('je').value.trim();
+  if(!n||!/^\S+@\S+\.\S+$/.test(e)){$('jerr').textContent='Add your name and a valid email.';return}
+  $('jerr').textContent='';wl++;$('jform').style.display='none';$('jok').style.display='block';
+  $('jhi').textContent="You're in, "+n.split(' ')[0]+'.';$('jpos').textContent='#'+wl.toLocaleString('en-IN');confetti();toast('Welcome to SpendScout');jn()}
+</script>
+</body>
+</html>
